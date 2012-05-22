@@ -244,9 +244,7 @@ td {
 
 #browser {
   box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-  width: 50%;
   padding:20px;
-  float: left;
 }
 
 #browser #location-bar .address {
@@ -255,8 +253,8 @@ td {
   margin: 0;
 }
 
-#browser .state { float: left; width: 50%; min-width: 300px; }
-#browser .links { float: left; width: 50%; min-width: 300px; }
+#browser .state { float: left; width: 60%; min-width: 300px; }
+#browser .links { float: right; width: 30%; min-width: 300px; }
 
 #inspector {
   box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;

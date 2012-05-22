@@ -10,7 +10,7 @@
       var self = this;
       opts = opts || {};
 
-      $.ajaxSetup({ headers: { 'Accept': 'application/hal+json, application/json, */*; q=0.01' } });
+      $.ajaxSetup({ crossDomain: true, headers: { 'Accept': 'application/hal+json, application/json, */*; q=0.01' } });
 
       this.browser = new HAL.Views.Browser({ el: $('#browser') });
       this.inspectorView = new HAL.Views.Inspector({ el: $('#inspector') });
@@ -23,7 +23,7 @@
       });
 
       if (window.location.hash === '') {
-        var entry = opts.entryPoint || '/';
+        var entry = opts.entryPoint || Dtime.endpoint;
         window.location.hash = entry;
       }
     },
@@ -48,8 +48,16 @@
       }
       this.set(representation);
       this.unset('_embedded', { silent: true });
+      this.unset('_connection', { silent: true });
       this.unset('_links', { silent: true });
     },
+    toTable: function(){
+      return prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})
+    },
+    toHtmlTable: function(){
+      return $(prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})).html();
+    },
+
 
     buildEmbeddedResources: function(embeddedResources) {
       var result = {};
@@ -72,7 +80,9 @@
     }
   });
 
+
   HAL.Views.Browser = Backbone.View.extend({
+
     initialize: function() {
       var self = this;
       this.locationBar = new HAL.Views.LocationBar({ el: this.$('#location-bar') });
@@ -83,10 +93,10 @@
     get: function(url) {
       var self = this;
       this.locationBar.setLocation(url);
-      var jqxhr = $.getJSON(url, function(resource) {
+      var ret = Dtime.request({url: url}).done(function(resource){
         self.resourceView.render(new HAL.Models.Resource(resource));
         self.trigger('render-resource', { resource: resource });
-      }).error(function() {
+      }).fail(function() {
         self.resourceView.showFailedRequest(jqxhr);
         self.trigger('render-resource', { resource: null });
       });
@@ -106,9 +116,9 @@
 
     render: function(resource) {
       this.$el.html(this.template({
-        state: resource.toJSON(),
         links: resource.links
       }));
+      this.$el.find('.state').append(resource.toTable());
       var $embres = this.$('.embedded-resources');
       $embres.html(this.renderEmbeddedResources(resource.embeddedResources));
       $embres.accordion();
@@ -136,14 +146,14 @@
         if ($.isArray(obj)) {
           _.each(obj, function(resource) {
             result += self.embeddedResourceTemplate({
-              state: resource.toJSON(),
+              state: resource.toHtmlTable(),
               links: resource.links,
               name: resource.identifier
             });
           });
         } else {
           result += self.embeddedResourceTemplate({
-            state: obj.toJSON(),
+            state: obj.toHtmlTable(),
             links: obj.links,
             name: obj.identifier
           });
