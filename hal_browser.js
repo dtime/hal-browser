@@ -24,7 +24,7 @@
 
       if (window.location.hash === '') {
         var entry = opts.entryPoint || Dtime.endpoint;
-        window.location.hash = entry;
+        window.location.hash = "GET:"+entry;
       }
     },
 
@@ -33,8 +33,16 @@
     },
 
     resourceRoute: function(url) {
+      var method = null, splits = null;
       url = location.hash.slice(1); // router removes preceding slash so get it manually
-      this.browser.get(url);
+      splits = url.split(':');
+      method = splits.shift();
+      if(method == "http" || method == "https"){
+        splits.unshift(method);
+        method = "GET";
+      }
+      url = splits.join(':');
+      this.browser.get(url, method);
     }
   });
 
@@ -46,9 +54,12 @@
       if(representation._embedded !== undefined) {
         this.embeddedResources = this.buildEmbeddedResources(representation._embedded);
       }
+      if(representation._template !== undefined) {
+        this.template = this._template;
+      }
       this.set(representation);
       this.unset('_embedded', { silent: true });
-      this.unset('_connection', { silent: true });
+      this.unset('_template', { silent: true });
       this.unset('_links', { silent: true });
     },
     toTable: function(){
@@ -86,20 +97,27 @@
     initialize: function() {
       var self = this;
       this.locationBar = new HAL.Views.LocationBar({ el: this.$('#location-bar') });
+      this.locationBar.browser = self;
       this.resourceView = new HAL.Views.Resource({ el: this.$('#current-resource') });
       this.resourceView.bind('show-docs', function(e) { self.trigger('show-docs', e); });
     },
 
-    get: function(url) {
+    get: function(url, method) {
       var self = this;
       this.locationBar.setLocation(url);
-      var ret = Dtime.request({url: url}).done(function(resource){
-        self.resourceView.render(new HAL.Models.Resource(resource));
-        self.trigger('render-resource', { resource: resource });
-      }).fail(function() {
-        self.resourceView.showFailedRequest(jqxhr);
-        self.trigger('render-resource', { resource: null });
-      });
+      this.locationBar.setMethod(method);
+      if(HAL.isUrlTemplate(url)){
+
+      }
+      else{
+        var ret = Dtime.request({url: url, method: method}).done(function(resource){
+          self.resourceView.render(new HAL.Models.Resource(resource.state));
+          self.trigger('render-resource', { resource: resource.state });
+        }).fail(function(jqxhr) {
+          self.resourceView.showFailedRequest(jqxhr);
+          self.trigger('render-resource', { resource: null });
+        });
+      }
     }
   });
 
@@ -116,12 +134,14 @@
 
     render: function(resource) {
       this.$el.html(this.template({
-        links: resource.links
+        links: resource.links,
+        top_state: resource.links
       }));
+      this.resource = resource.toJSON();
       this.$el.find('.state').append(resource.toTable());
       var $embres = this.$('.embedded-resources');
-      $embres.html(this.renderEmbeddedResources(resource.embeddedResources));
-      $embres.accordion();
+      $embres.empty().replaceWith(this.renderEmbeddedResources(resource.embeddedResources, resource));
+      this.$('.embedded-resources').accordion();
       return this;
     },
 
@@ -131,33 +151,51 @@
 
     followLink: function(e) {
       e.preventDefault();
-      window.location.hash = $(e.target).attr('href');
+      window.location.hash = "GET:"+$(e.target).attr('href');
     },
 
     showDocs: function(e) {
       e.preventDefault();
-      this.trigger('show-docs', { url: $(e.target).attr('href') });
+      this.trigger('show-docs', { url: $(e.target).attr('href'), rel: $(e.target).data('rel') });
     },
 
-    renderEmbeddedResources: function(embeddedResources) {
+    renderEmbeddedResources: function(embeddedResources, top_state) {
       var self = this;
-      var result = '';
+      var nested = true;
+      var result = null;
+      if(!result){
+        nested = false;
+        result = $('<div class="embedded-resources">');
+      }
       _.each(embeddedResources, function(obj) {
         if ($.isArray(obj)) {
           _.each(obj, function(resource) {
-            result += self.embeddedResourceTemplate({
+            var new_template = self.embeddedResourceTemplate({
               state: resource.toHtmlTable(),
+              top_state: top_state.links,
               links: resource.links,
               name: resource.identifier
             });
+            var $new_template = $(new_template);
+            $(result).append($new_template);
+            $new_template.find('.nested-resources').replaceWith(self.renderEmbeddedResources(resource.embeddedResources, resource));
+            $new_template.find('.embedded-resources').attr('class', 'nested-resources');
+            $new_template.find('.nested-resources a').attr('href', 'javascript:false');
           });
         } else {
-          result += self.embeddedResourceTemplate({
+          var new_template = self.embeddedResourceTemplate({
             state: obj.toHtmlTable(),
+            top_state: top_state.links,
             links: obj.links,
             name: obj.identifier
           });
+          var $new_template = $(new_template);
+          $(result).append($new_template);
+          $new_template.find('.nested-resources').replaceWith(self.renderEmbeddedResources(obj.embeddedResources, obj));
+          $new_template.find('.embedded-resources').attr('class', 'nested-resources');
+          $new_template.find('.nested-resources a').attr('href', 'javascript:false');
         }
+        console.log($(result));
       });
       return result;
     },
@@ -170,25 +208,107 @@
   });
 
   HAL.Views.LocationBar = Backbone.View.extend({
-    setLocation: function(url) {
-      this.address.html(url);
+    events: {
+      'click .go': 'followLink'
     },
 
-    address: $('.address')
+    followLink: function(e) {
+      e.preventDefault();
+      window.location.hash = this.method.val() + ":" + this.address.val();
+    },
+    setLocation: function(url) {
+      $(document).scrollTop(0);
+      this.address.val(url);
+    },
+    setMethod: function(method) {
+      this.method.val(method)
+    },
+
+    address: $('.address'),
+    go: $('.go'),
+    method: $('.method'),
   });
 
   HAL.Views.Inspector = Backbone.View.extend({
+    events: {
+      'click .toggler': 'toggle'
+    },
     showDocs: function(e) {
+      if(this.$('.panel').not(':visible')){
+        this.$el.addClass('active');
+        this.$('.panel').delay(300).fadeIn();
+        this.$('h1').remove();
+        this.$el.prepend($("<h1>docs for "+e.rel+"</h1>").hide().delay(300).fadeIn());
+        this.$('.toggler').text('[hide]');
+      }
       this.$('.panel').html('<iframe src=' + e.url + '></iframe>');
     },
 
     showRawResource: function(e) {
+      this.$('.panel').fadeOut();
+      this.$el.delay(300).removeClass('active');
+      this.$('h1').remove();
+      this.$('.toggler').text('[inspect]');
       this.$('.panel').html('<pre>' + JSON.stringify(e.resource, null, 2) + '</pre>');
+    },
+    toggle: function(e){
+      if(this.$('.panel').is(':visible')){
+        this.$('.panel').hide();
+        this.$('h1').remove();
+        this.$('.toggler').text('[show]');
+        this.$el.removeClass('active');
+      }
+      else{
+        this.$('.panel').delay(300).fadeIn();
+        this.$el.prepend($("<h1>inspector</h1>").hide().delay(300).fadeIn());
+        this.$('.toggler').text('[hide]');
+        this.$el.addClass('active');
+      }
     }
   });
 
+  HAL.curie = function(str, state) {
+    if(HAL.isUrl(str)){
+      return str;
+    }
+    else{
+      var url = HAL.find_href(state, 'curie', {relation: str});
+      if(HAL.isUrl(url)){
+        return url;
+      }
+      else{
+        return false;
+      }
+    }
+
+  },
+  HAL.find_link = function(state_links, rel) {
+    var link;
+    for (link in state_links) {
+        if (link == rel) {
+            return state_links[rel];
+        }
+    }
+    return false;
+  },
+  HAL.find_href = function (state, rel, tmpl) {
+    var link, template;
+    link = HAL.find_link(state, rel);
+    if (link && link["href"]) {
+      template = uritemplate(link["href"]);
+      return template.expand(tmpl);
+    } else {
+      return (link ? link.href : link);
+    }
+  },
+  HAL.isUrlTemplate = function(str) {
+    var urlRegex = /(http|https):\/\/.*{.+}.*/;
+    if(!str) return false;
+    return str.match(urlRegex);
+  };
   HAL.isUrl = function(str) {
     var urlRegex = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    if(!str) return false;
     return str.match(urlRegex);
   };
 

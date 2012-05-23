@@ -1,6 +1,6 @@
 class State
-  constructor: (obj, @_connection)->
-    _.extend(this, obj)
+  constructor: (@state, @_connection)->
+    _.extend(this, @state)
 
   request: (url, opts = {})->
     @connection.request opts

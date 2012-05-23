@@ -6,6 +6,8 @@ class Connection
 
   request: (opts)->
     opts = _.extend opts
+    opts.type = opts.method if opts.method?
+    opts.type ?= 'GET'
     if(@options.oauth_token)
       opts = _.extend opts,
         headers:
