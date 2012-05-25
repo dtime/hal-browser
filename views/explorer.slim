@@ -1,0 +1,42 @@
+doctype html
+html
+  head
+    meta charset="utf-8"
+    title API Browser
+    link rel="stylesheet" media="screen" href="/styles.css"
+    link rel="stylesheet" media="screen" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/base/jquery-ui.css"
+    link rel="stylesheet" media="screen" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/ui-lightness/jquery-ui.css"
+
+  body
+    header
+      a href="/logout" Logout
+
+  div.clearfix#container
+    #inspector
+      h1
+      div.toggler
+        p [inspect]
+      div.panel
+    div#browser
+      h1 Browser
+      .clearfix#location-bar
+        select class="method"
+          option GET
+          option OPTIONS
+        input.address
+        input.go type="submit" value="Go"
+      #current-resource
+  == partial("js_templates")
+  script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+  script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"
+  script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"
+  script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"
+  script src="//raw.github.com/therabidbanana/prettyPrint.js/master/prettyprint.js"
+  script src="//raw.github.com/marc-portier/uri-templates/master/src/main/js/uritemplates.js"
+  script src="/dtime.js"
+  script src="/hal_browser.js"
+  javascript:
+    Dtime.defaults.endpoint = "#{{@api_root}}";
+    Dtime.defaults.oauth_token = "#{@api_token}";
+    router = new HAL.Router({});
+    Backbone.history.start();

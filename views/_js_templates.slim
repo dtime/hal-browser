@@ -1,42 +1,17 @@
-<!doctype html>
-<head>
-  <meta charset="utf-8">
-  <title>API Browser</title>
-  <link rel="stylesheet" media="screen" href="styles.css" />
-  <link rel="stylesheet" media="screen" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/base/jquery-ui.css" />
-  <link rel="stylesheet" media="screen" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/ui-lightness/jquery-ui.css" />
-</head>
-<body>
-
-  <div class="clearfix" id="container">
-    <div id="inspector">
-      <h1></h1>
-      <div class="toggler">
-        <p>[inspect]</p>
-      </div>
-      <div class="panel">
-      </div>
-    </div>
-    <div id="browser">
-      <h1>Browser</h1>
-      <div class="clearfix" id="location-bar">
-        <select class="method">
-          <option>GET</option>
-          <option>OPTIONS</option>
-        </select>
-        <input class="address">
-        <input class="go" type="submit" value="Go">
-      </div>
-      <div id="current-resource"></div>
-    </div>
-
-  </div>
-
+markdown:
   <script id="resource-template" type="text/template">
     <div>
       <div class="clearfix">
         <div class="state">
         <h2>State</h2>
+        <div class="toggler">
+          <p>[headers]</p>
+        </div>
+        <div class="headers">
+          <code><pre><%= headers %></pre> </code>
+        </div>
+        <div class="response">
+        </div>
         </div>
         <div class="links">
         <h2>Links</h2>
@@ -89,9 +64,9 @@
 
   <script id="failed-request-template" type="text/template">
     <pre>
-<%= jqxhr.status %> <%= jqxhr.statusText %>
+    <%= jqxhr.status %> <%= jqxhr.statusText %>
 
-<%= jqxhr.getAllResponseHeaders() %>
+    <%= jqxhr.getAllResponseHeaders() %>
     </pre>
   </script>
 
@@ -150,19 +125,3 @@
       </div>
     </div>
   </script>
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
-  <script src="https://raw.github.com/therabidbanana/prettyPrint.js/master/prettyprint.js"></script>
-  <script src="https://raw.github.com/marc-portier/uri-templates/master/src/main/js/uritemplates.js"></script>
-  <script src="./dist/dtime.js"></script>
-  <script src="hal_browser.js"></script>
-  <script>
-    Dtime.defaults.endpoint = "http://sshinto.me:9292/";
-    Dtime.defaults.oauth_token = "0ad2e2301232fa8ee4ac2148b2735be1a96e6c6b358637e71ea02cc50022bd61";
-    router = new HAL.Router({});
-    Backbone.history.start();
-  </script>
-</body>

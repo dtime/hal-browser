@@ -23,7 +23,7 @@
       });
 
       if (window.location.hash === '') {
-        var entry = opts.entryPoint || Dtime.endpoint;
+        var entry = opts.entryPoint || Dtime.defaults.endpoint;
         window.location.hash = "GET:"+entry;
       }
     },
@@ -47,20 +47,24 @@
   });
 
   HAL.Models.Resource = Backbone.Model.extend({
-    initialize: function(representation) {
+    initialize: function(representation, jqxhr) {
       if(representation._links !== undefined) {
         this.links = representation._links;
       }
       if(representation._embedded !== undefined) {
-        this.embeddedResources = this.buildEmbeddedResources(representation._embedded);
+        this.embeddedResources = this.buildEmbeddedResources(representation._embedded, jqxhr);
       }
       if(representation._template !== undefined) {
         this.template = this._template;
       }
+      this.request_object = jqxhr;
       this.set(representation);
       this.unset('_embedded', { silent: true });
       this.unset('_template', { silent: true });
       this.unset('_links', { silent: true });
+    },
+    headers: function(){
+      return this.request_object.getAllResponseHeaders()
     },
     toTable: function(){
       return prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})
@@ -70,19 +74,19 @@
     },
 
 
-    buildEmbeddedResources: function(embeddedResources) {
+    buildEmbeddedResources: function(embeddedResources, jqxhr) {
       var result = {};
       _.each(embeddedResources, function(obj, rel) {
         if($.isArray(obj)) {
           var arr = [];
           _.each(obj, function(resource, i) {
-            var newResource = new HAL.Models.Resource(resource);
+            var newResource = new HAL.Models.Resource(resource, jqxhr);
             newResource.identifier = rel + '[' + i + ']';
             arr.push(newResource);
           });
           result[rel] = arr;
         } else {
-          var newResource = new HAL.Models.Resource(obj);
+          var newResource = new HAL.Models.Resource(obj, jqxhr);
           newResource.identifier = rel;
           result[rel] = newResource;
         }
@@ -111,7 +115,7 @@
       }
       else{
         var ret = Dtime.request({url: url, method: method}).done(function(resource){
-          self.resourceView.render(new HAL.Models.Resource(resource.state));
+          self.resourceView.render(new HAL.Models.Resource(resource.state, resource.xhr));
           self.trigger('render-resource', { resource: resource.state });
         }).fail(function(jqxhr) {
           self.resourceView.showFailedRequest(jqxhr);
@@ -135,10 +139,20 @@
     render: function(resource) {
       this.$el.html(this.template({
         links: resource.links,
-        top_state: resource.links
+        top_state: resource.links,
+        headers: resource.headers()
       }));
       this.resource = resource.toJSON();
-      this.$el.find('.state').append(resource.toTable());
+      this.$el.find('.state .response').append(resource.toTable());
+      this.$el.find('.state .headers').hide();
+      headers = this.$el.find('.state .headers');
+      this.$el.find('.state .toggler').toggle(function(){
+        headers.slideDown();
+        $(this).text('[hide]');
+      }, function(){
+        headers.slideUp();
+        $(this).text('[headers]');
+      });
       var $embres = this.$('.embedded-resources');
       $embres.empty().replaceWith(this.renderEmbeddedResources(resource.embeddedResources, resource));
       this.$('.embedded-resources').accordion();
@@ -180,7 +194,7 @@
             $(result).append($new_template);
             $new_template.find('.nested-resources').replaceWith(self.renderEmbeddedResources(resource.embeddedResources, resource));
             $new_template.find('.embedded-resources').attr('class', 'nested-resources');
-            $new_template.find('.nested-resources a').attr('href', 'javascript:false');
+            $new_template.find('.nested-resources>h3>a').attr('href', 'javascript:false');
           });
         } else {
           var new_template = self.embeddedResourceTemplate({
