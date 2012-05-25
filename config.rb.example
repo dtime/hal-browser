@@ -1,6 +1,6 @@
 configure do
   set :api_root,
-    dev: "http://sshinto.me:9292/",
+    dev: "http://dev-api.dtime.com/",
     prod: "https://api.dtime.com/"
 
   set :api_links,
