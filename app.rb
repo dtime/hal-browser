@@ -47,14 +47,18 @@ end
 # Get back OAuth token, redirect to explorer
 get '/oauth/callback' do
   my_env = (params[:my_env] || :dev).to_sym
-  token = HTTParty.post(
-    dtime_href_for(my_env, 'dtime:developers:oauth:token').expand({
-      code: params[:code],
-      client_id: settings.api_oauth_client[my_env][:client_id],
-      client_secret: settings.api_oauth_client[my_env][:client_secret],
-    })
-  )
-  session[:current_api_token] = token["token"]
-  redirect '/explorer'
+  if params[:error]
+    token = HTTParty.post(
+      dtime_href_for(my_env, 'dtime:developers:oauth:token').expand({
+        code: params[:code],
+        client_id: settings.api_oauth_client[my_env][:client_id],
+        client_secret: settings.api_oauth_client[my_env][:client_secret],
+      })
+    )
+    session[:current_api_token] = token["token"]
+    redirect '/'
+  else
+    redirect '/explorer'
+  end
 end
 
