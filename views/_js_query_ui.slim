@@ -1,0 +1,13 @@
+markdown:
+  <script id="query-uri-template" type="text/template">
+    <form id="query" action="<%= href %>">
+      <p>URI Template:</p>
+      <pre><%= href %></pre>
+      <p>Input (JSON):</p>
+      <textarea style="width: 100%; height: 300px">{ "foo": "bar" }</textarea>
+      <p>Expanded URI:</p>
+      <pre class="preview">&nbsp;</pre>
+      <input type="submit" value="Follow URI" />
+    </form>
+  </script>
+

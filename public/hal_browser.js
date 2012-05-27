@@ -133,6 +133,7 @@
 
     events: {
       'click .links a.link': 'followLink',
+      'click .links a.templated_link': 'showUriQueryDialog',
       'click .links a.dox': 'showDocs'
     },
 
@@ -166,6 +167,19 @@
     followLink: function(e) {
       e.preventDefault();
       window.location.hash = "GET:"+$(e.target).attr('href');
+    },
+
+    showUriQueryDialog: function(e) {
+      e.preventDefault();
+
+      var d = new HAL.Views.QueryUriDialog({
+        href: $(e.target).attr('href')
+      }).render();
+
+      d.$el.dialog({
+        title: 'Query URI Template',
+        width: 400
+      });
     },
 
     showDocs: function(e) {
@@ -280,6 +294,51 @@
       }
     }
   });
+  HAL.Views.QueryUriDialog = Backbone.View.extend({
+    initialize: function(opts) {
+      this.href = opts.href;
+      this.uriTemplate = uritemplate(this.href);
+      _.bindAll(this, 'submitQuery');
+      _.bindAll(this, 'renderPreview');
+    },
+
+    events: {
+      'submit form': 'submitQuery',
+      'keyup textarea': 'renderPreview',
+      'change textarea': 'renderPreview'
+    },
+
+    submitQuery: function(e) {
+      e.preventDefault();
+      var input;
+      try {
+        input = JSON.parse(this.$('textarea').val());
+      } catch(err) {
+        input = {};
+      }
+      this.$el.dialog('close');
+      window.location.hash = this.uriTemplate.expand(input);
+    },
+
+    renderPreview: function(e) {
+      var input, result;
+      try {
+        input = JSON.parse($(e.target).val());
+        result = this.uriTemplate.expand(input);
+      } catch (err) {
+        result = 'Invalid json input';
+      }
+      this.$('.preview').html(result);
+    },
+
+    render: function() {
+      this.$el.html(this.template({ href: this.href }));
+      this.$('textarea').trigger('keyup');
+      return this;
+    },
+
+    template: _.template($('#query-uri-template').html())
+  });
 
   HAL.curie = function(str, state) {
     if(HAL.isUrl(str)){
@@ -315,6 +374,12 @@
       return (link ? link.href : link);
     }
   },
+  HAL.templated = function(link) {
+    var urlRegex = /(http|https):\/\/.*{.+}.*/;
+    var str = link.href;
+    if(!str) return false;
+    return str.match(urlRegex);
+  };
   HAL.isUrlTemplate = function(str) {
     var urlRegex = /(http|https):\/\/.*{.+}.*/;
     if(!str) return false;

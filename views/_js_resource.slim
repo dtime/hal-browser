@@ -1,0 +1,76 @@
+markdown:
+  <script id="resource-template" type="text/template">
+    <div>
+      <div class="clearfix">
+        <div class="state">
+        <h2>State</h2>
+        <div class="toggler">
+          <p>[headers]</p>
+        </div>
+        <div class="headers">
+          <code><pre><%= headers %></pre> </code>
+        </div>
+        <div class="response">
+        </div>
+        </div>
+        <div class="links">
+        <h2>Links</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>rel</th>
+                <th>name / index</th>
+                <th>docs</th>
+                <th>follow</th>
+              </tr>
+            </thead>
+            <tbody>
+            <% _.each(links, function(obj, rel) { %>
+              <% if ($.isArray(obj)) { %>
+                <% _.each(obj, function(link, i) { %>
+                  <tr>
+                    <td><strong><%= HAL.truncateIfUrl(rel) %></strong></td>
+                    <td><%= link.name ? 'name: ' + link.name : 'index: ' + i %></a></td>
+                    <td>
+                    <% if (HAL.curie(rel, top_state)) { %>
+                      <a class="dox" data-rel="<%= rel %>" href="<%= HAL.curie(rel, top_state) %>">[docs]</a>
+                    <% } %>
+                    </td>
+                    <td>
+                    <% if (HAL.templated(link)) { %>
+                      <a class="templated_link" href="<%= link.href %>">{}=&gt;</a>
+                    <% } else { %>
+                      <a class="link" href="<%= link.href %>">=&gt;</a>
+                    <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td><strong><%= HAL.truncateIfUrl(rel) %></strong></td>
+                  <td><%= obj.name || '' %></td>
+                  <td>
+                  <% if (HAL.curie(rel, top_state)) { %>
+                    <a class="dox" data-rel="<%= rel %>" href="<%= HAL.curie(rel, top_state) %>">[docs]</a>
+                  <% } %>
+                  </td>
+                  <td>
+                  <% if (HAL.templated(obj)) { %>
+                    <a class="templated_link" href="<%= obj.href %>">{}=&gt;</a>
+                  <% } else { %>
+                    <a class="link" href="<%= obj.href %>">=&gt;</a>
+                  <% } %>
+                  </td>
+                </tr>
+              <% } %>
+            <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <h2>Embedded Resources</h2>
+      <div class="embedded-resources">
+      </div>
+    </div>
+  </script>
+

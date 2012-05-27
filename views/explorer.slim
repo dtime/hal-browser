@@ -26,7 +26,10 @@ html
         input.address
         input.go type="submit" value="Go"
       #current-resource
-  == partial("js_templates")
+  == partial("js_resource")
+  == partial("js_embedded_resource")
+  == partial("js_query_ui")
+  == partial("js_failure")
   script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
   script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"
   script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"
