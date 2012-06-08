@@ -31,7 +31,7 @@ markdown:
                   </td>
                   <td>
                   <% if (HAL.templated(link)) { %>
-                    <a class="templated_link" href="<%= link.href %>">{}=&gt;</a>
+                    <a class="templated_link" data-href-vars='<%= JSON.stringify(link['href-vars']) %>' href="<%= link.href %>">{}=&gt;</a>
                   <% } else { %>
                     <a class="link" href="<%= link.href %>">=&gt;</a>
                   <% } %>
@@ -49,7 +49,7 @@ markdown:
                 </td>
                 <td>
                 <% if (HAL.templated(obj)) { %>
-                  <a class="templated_link" href="<%= obj.href %>">{}=&gt;</a>
+                  <a class="templated_link" data-href-vars='<%= JSON.stringify(obj['href-vars']) %>' href="<%= obj.href %>">{}=&gt;</a>
                 <% } else { %>
                   <a class="link" href="<%= obj.href %>">=&gt;</a>
                 <% } %>

@@ -3,8 +3,16 @@ markdown:
     <form id="query" action="<%= href %>">
       <p>URI Template:</p>
       <pre><%= href %></pre>
-      <p>Input (JSON):</p>
-      <textarea style="width: 100%; height: 300px">{ "foo": "bar" }</textarea>
+      <% var var_was_used = false; %>
+      <% _.each(vars, function(val, href_var){ %>
+        <p><%= href_var %>:</p>
+        <input name="<%= href_var %>" value="value"/>
+        <% var_was_used = true; %>
+      <% }); %>
+      <% if (!var_was_used){ %>
+        <p>Input (JSON):</p>
+        <textarea style="width: 100%; height: 300px">{ "foo": "bar" }</textarea>
+      <% } %>
       <p>Expanded URI:</p>
       <pre class="preview">&nbsp;</pre>
       <input type="submit" value="Follow URI" />

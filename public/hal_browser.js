@@ -171,9 +171,9 @@
 
     showUriQueryDialog: function(e) {
       e.preventDefault();
-
       var d = new HAL.Views.QueryUriDialog({
-        href: $(e.target).attr('href')
+        href: $(e.target).attr('href'),
+        vars: $(e.target).data('href-vars')
       }).render();
 
       d.$el.dialog({
@@ -297,6 +297,8 @@
   HAL.Views.QueryUriDialog = Backbone.View.extend({
     initialize: function(opts) {
       this.href = opts.href;
+      this.vars = opts.vars;
+      if(this.vars === "undefined") this.vars = {};
       this.uriTemplate = uritemplate(this.href);
       _.bindAll(this, 'submitQuery');
       _.bindAll(this, 'renderPreview');
@@ -305,34 +307,53 @@
     events: {
       'submit form': 'submitQuery',
       'keyup textarea': 'renderPreview',
-      'change textarea': 'renderPreview'
+      'keyup input': 'renderPreview',
+      'change textarea': 'renderPreview',
+      'change input': 'renderPreview'
     },
 
     submitQuery: function(e) {
       e.preventDefault();
       var input;
-      try {
-        input = JSON.parse(this.$('textarea').val());
-      } catch(err) {
+      input = this.pullData(e);
+      if(!input){
         input = {};
       }
       this.$el.dialog('close');
       window.location.hash = this.uriTemplate.expand(input);
     },
 
-    renderPreview: function(e) {
-      var input, result;
+    pullData: function(e){
+      var data = {}, input = {};
+      this.$('input').each(function(){
+        if($(this).attr('name'))
+          data[$(this).attr('name')] = $(this).val();
+      });
+
       try {
-        input = JSON.parse($(e.target).val());
-        result = this.uriTemplate.expand(input);
+        if(this.$('textarea').length > 0){
+          input = JSON.parse(this.$('textarea').val());
+          data = _.extend(data, input);
+        }
       } catch (err) {
+        return false;
+      }
+      return data;
+    },
+
+    renderPreview: function(e) {
+      var input, result, data;
+      data = this.pullData(e);
+      if(data){
+        result = this.uriTemplate.expand(data);
+      }else {
         result = 'Invalid json input';
       }
       this.$('.preview').html(result);
     },
 
     render: function() {
-      this.$el.html(this.template({ href: this.href }));
+      this.$el.html(this.template({ href: this.href , vars: this.vars}));
       this.$('textarea').trigger('keyup');
       return this;
     },
