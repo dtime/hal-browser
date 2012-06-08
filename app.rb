@@ -53,6 +53,8 @@ end
 get '/oauth/callback' do
   my_env = (params[:my_env] || :dev).to_sym
   if params[:error]
+    redirect '/'
+  else
     token = HTTParty.post(
       dtime_href_for(my_env, 'dtime:developers:oauth:token').expand({
         code: params[:code],
@@ -61,8 +63,6 @@ get '/oauth/callback' do
       })
     )
     session[:current_api_token] = token["token"]
-    redirect '/'
-  else
     redirect '/explorer'
   end
 end
