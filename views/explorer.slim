@@ -6,40 +6,56 @@ html
     link rel="stylesheet" media="screen" href="/styles.css"
     link rel="stylesheet" media="screen" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/base/jquery-ui.css"
     link rel="stylesheet" media="screen" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/ui-lightness/jquery-ui.css"
+    link rel="stylesheet" media="screen" href="/javascripts/prettify.css"
+    link rel="stylesheet" media="screen" href="/stylesheets/bootstrap.css"
 
   body
-    header
-      a href="/logout" Logout
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          a.brand href="/" HAL Explorer
+          ul.nav.pull-right
+            li.dropdown
+              a.dropdown-toggle data-toggle="dropdown"
+                | Endpoints
+                b.caret
+              ul.dropdown-menu
+                li: a href="/login/stag" Dtime Sandbox
+                li: a href="/login/prod" Live Dtime
+            li: a href="/logout" Logout
 
-  div.clearfix#container
-    #inspector
-      h1
-      div.toggler
-        p [inspect]
-      div.panel
-    div#browser
-      h1 Browser
-      .clearfix#location-bar
+    #location-bar
+      .container
         select class="method"
           option GET
           option OPTIONS
         input.address
         input.go type="submit" value="Go"
       #current-resource
-  == partial("js_resource")
-  == partial("js_embedded_resource")
-  == partial("js_query_ui")
-  == partial("js_failure")
-  script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
-  script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"
-  script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"
-  script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"
-  script src="//raw.github.com/therabidbanana/prettyPrint.js/master/prettyprint.js"
-  script src="//raw.github.com/marc-portier/uri-templates/master/src/main/js/uritemplates.js"
-  script src="/dtime.js"
-  script src="/hal_browser.js"
-  javascript:
-    Dtime.defaults.endpoint = "#{{@api_root}}";
-    Dtime.defaults.oauth_token = "#{@api_token}";
-    router = new HAL.Router({});
-    Backbone.history.start();
+    div.clearfix#container
+      #inspector
+        h1
+        div.toggler
+          p [inspect]
+        div.panel
+      div#browser
+        #current-resource
+    == partial("js_resource")
+    == partial("js_embedded_resource")
+    == partial("js_query_ui")
+    == partial("js_failure")
+    script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+    script src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"
+    script src='/javascripts/underscore-min.js'
+    script src='/javascripts/backbone-min.js'
+    / script src="//raw.github.com/therabidbanana/prettyPrint.js/master/prettyprint.js"
+    script src='/javascripts/uritemplates.js'
+    script src='/javascripts/bootstrap.js'
+    script src='/javascripts/prettify.js'
+    script src="/dtime.js"
+    script src="/hal_browser.js"
+    javascript:
+      Dtime.defaults.endpoint = "#{{@api_root}}";
+      Dtime.defaults.oauth_token = "#{@api_token}";
+      router = new HAL.Router({});
+      Backbone.history.start();

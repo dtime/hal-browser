@@ -1,0 +1,123 @@
+.docs article{
+  padding-top: 2em;
+}
+.docs .accordion-heading a{
+  text-decoration: none;
+  color: #555;
+}
+.docs .sidenav.pull-right{
+  width: 33.076923077%;
+  margin-left: 1em;
+}
+.docs .sidenav .nav-list li a{
+  *zoom: 1;
+}
+
+.docs .sidenav .nav-list li a:before,
+.docs .sidenav .nav-list li a:after {
+  display: table;
+  content: "";
+}
+
+.docs .sidenav .nav-list li a:after {
+  clear: both;
+}
+
+.docs .nav-list .scope_tag{
+  float: right;
+  margin: 2px;
+}
+.docs #nav_accordion{
+  background-color: aliceblue;
+}
+.docs .accordion-group{
+  padding: 1em 0;
+}
+.docs .sidenav.pull-right .nav-list{
+  padding: 0;
+}
+.docs .sidenav.pull-right h4{
+  margin: 1em 0em 0.3em;
+}
+@media (max-width: 480px) {
+}
+@media (max-width: 767px) {
+  .docs .sidenav.pull-right{
+    width: auto;
+    display: block;
+    float: none;
+  }
+}
+.scope_tag{
+  margin-right: 0.5em;
+}
+.scope_tag.settings{
+  background-color: #B44;
+}
+.scope_tag.private{
+  background-color: #468847;
+}
+.scope_tag.public{
+  background-color: #38A;
+}
+.scope_tag.write{
+  background-color: #F89406;
+}
+.scope_tag.dtime-internal, .scope_tag.login_settings, .scope_tag.fast_login{
+  background-color: #224;
+}
+
+
+.request{
+  clear: both;
+  width: 90%;
+  background-color: #ddd;
+  border: 1px solid #bbb;
+  margin: 1.2em auto;
+  border-radius: 5px;
+  font-family: monospace;
+  position: relative;
+}
+
+.request .tryme{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: absolute;
+  top: 8px;
+  right: 20px;
+
+}
+
+.request .curl{
+  background: #ccc;
+  padding: 0.3em 0.6em;
+  margin: 0;
+}
+.request .curl .href{
+  padding: 0.7em 0;
+}
+.request .curl .verb{
+  float: left;
+  padding: 0.7em 0;
+  margin-right: 2em;
+}
+.request .params{
+  margin: 0;
+  border-top: 1px solid #bbb;
+  list-style: none;
+  background: aliceblue;
+  padding: 0.3em 0.6em;
+}
+.request .headers{
+  margin: 0;
+  border-top: 1px solid #bbb;
+  list-style: none;
+  background: #ccc;
+  padding: 1em 0.6em;
+  font-size: smaller;
+}
+.request .response{
+  background: #efefef;
+  margin: 0;
+  padding: 15px;
+  overflow: auto;
+}

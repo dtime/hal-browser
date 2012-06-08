@@ -67,7 +67,9 @@
       return this.request_object.getAllResponseHeaders()
     },
     toTable: function(){
-      return prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})
+      var node =$("<pre class='prettyprint'>"+JSON.stringify(this.toJSON(), null, 2)+"</pre>");
+      return node;
+      // return prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})
     },
     toHtmlTable: function(){
       return $(prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})).html();
@@ -100,7 +102,7 @@
 
     initialize: function() {
       var self = this;
-      this.locationBar = new HAL.Views.LocationBar({ el: this.$('#location-bar') });
+      this.locationBar = new HAL.Views.LocationBar({ el: $('#location-bar') });
       this.locationBar.browser = self;
       this.resourceView = new HAL.Views.Resource({ el: this.$('#current-resource') });
       this.resourceView.bind('show-docs', function(e) { self.trigger('show-docs', e); });
@@ -145,6 +147,8 @@
       }));
       this.resource = resource.toJSON();
       this.$el.find('.state .response').append(resource.toTable());
+      prettyPrint();
+
       this.$el.find('.state .headers').hide();
       headers = this.$el.find('.state .headers');
       this.$el.find('.state .toggler').toggle(function(){

@@ -15,9 +15,14 @@ get '/' do
 end
 
 get '/explorer' do
-  @api_token = session[:current_api_token]
-  @api_root = session[:current_root]
-  slim :explorer
+  if(params[:root])
+    session[:current_root] = params[:root]
+    redirect to('/explorer')
+  else
+    @api_token = session[:current_api_token]
+    @api_root = session[:current_root]
+    slim :explorer
+  end
 end
 
 
