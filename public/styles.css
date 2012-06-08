@@ -9,9 +9,12 @@
   font-size: 24px;
 }
 body.main{
-  padding-top: 84px;
+  padding-top: 34px;
 }
 body{
+}
+.main .help-cors{
+  margin-bottom: 0em;
 }
 .explorer .navbar .nav.pull-right{
   margin-right: 10px;

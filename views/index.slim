@@ -5,7 +5,7 @@ html
     title API Browser
     link rel="stylesheet" media="screen" href="/styles.css"
     link rel="stylesheet" media="screen" href="/stylesheets/bootstrap.css"
-  body
+  body.main
     .navbar.navbar-fixed-top
       .navbar-inner
         .container
@@ -40,6 +40,11 @@ html
             p The actual dtime api. Read-only access.
       .page-header
         h2 Manual Connection:
+        p.help-cors
+          strong Note:
+          |  The endpoint must use CORS to enable cross-domain
+             AJAX requests, or the hal browser won't be able to access
+             it.
       form.form-horizontal(action='/explorer')
         .control-group
           label.control-label API Root:
