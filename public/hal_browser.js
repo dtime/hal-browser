@@ -275,7 +275,7 @@
         this.$el.addClass('active');
         this.$('.panel').slideDown();
         this.$('h1').remove();
-        this.$el.prepend($("<h1>docs for "+e.rel+"</h1>").hide().delay(300).fadeIn());
+        this.$el.prepend($("<h1>docs for "+e.rel+"</h1>").show());
         this.$('.toggler').text('hide');
       }
       this.$('.panel').html('<iframe src=' + e.url + '></iframe>').slideDown();
@@ -296,7 +296,7 @@
         this.$el.removeClass('active');
       }
       else{
-        this.$el.prepend($("<h1>inspector</h1>").hide().delay(300).fadeIn());
+        this.$el.prepend($("<h1>inspector</h1>").show());
         this.$('.toggler').text('hide');
         this.$el.addClass('active');
         this.$('.panel').slideDown();
