@@ -19,6 +19,11 @@ body{
   margin-top: 1.8em;
 }
 
+.embeds .nested-resources{
+  clear: both;
+  padding-top: 3em;
+}
+
 /* ==|== primary styles =====================================================
    Author: Mike Kelly <mikekelly321@gmail.com>
    ========================================================================== */

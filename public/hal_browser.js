@@ -67,9 +67,9 @@
       return this.request_object.getAllResponseHeaders()
     },
     toTable: function(){
-      var node =$("<pre class='prettyprint'>"+JSON.stringify(this.toJSON(), null, 2)+"</pre>");
-      return node;
-      // return prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})
+      // var node =$("<pre class='prettyprint'>"+JSON.stringify(this.toJSON(), null, 2)+"</pre>");
+      // return node;
+      return prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})
     },
     toHtmlTable: function(){
       return $(prettyPrint(this.toJSON(), {maxDepth: 5, maxArray: 5})).html();
