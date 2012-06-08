@@ -153,10 +153,10 @@
       headers = this.$el.find('.state .headers');
       this.$el.find('.state .toggler').toggle(function(){
         headers.slideDown();
-        $(this).text('[hide]');
+        $(this).text('hide');
       }, function(){
         headers.slideUp();
-        $(this).text('[headers]');
+        $(this).text('headers');
       });
       var $embres = this.$('.embedded-resources');
       $embres.empty().replaceWith(this.renderEmbeddedResources(resource.embeddedResources, resource));
@@ -241,19 +241,24 @@
 
   HAL.Views.LocationBar = Backbone.View.extend({
     events: {
-      'click .go': 'followLink'
+      'click .go': 'followLink',
+      'click .method-list a': 'updateMethod'
     },
 
     followLink: function(e) {
       e.preventDefault();
-      window.location.hash = this.method.val() + ":" + this.address.val();
+      window.location.hash = this.go.text() + ":" + this.address.val();
     },
     setLocation: function(url) {
       $(document).scrollTop(0);
       this.address.val(url);
     },
+    updateMethod: function(e) {
+      this.go.text($(e.currentTarget).text())
+      e.preventDefault();
+    },
     setMethod: function(method) {
-      this.method.val(method)
+      this.go.text(method)
     },
 
     address: $('.address'),
@@ -268,33 +273,33 @@
     showDocs: function(e) {
       if(this.$('.panel').not(':visible')){
         this.$el.addClass('active');
-        this.$('.panel').delay(300).fadeIn();
+        this.$('.panel').slideDown();
         this.$('h1').remove();
         this.$el.prepend($("<h1>docs for "+e.rel+"</h1>").hide().delay(300).fadeIn());
-        this.$('.toggler').text('[hide]');
+        this.$('.toggler').text('hide');
       }
-      this.$('.panel').html('<iframe src=' + e.url + '></iframe>');
+      this.$('.panel').html('<iframe src=' + e.url + '></iframe>').slideDown();
     },
 
     showRawResource: function(e) {
-      this.$('.panel').fadeOut();
+      this.$('.panel').slideUp();
       this.$el.delay(300).removeClass('active');
       this.$('h1').remove();
-      this.$('.toggler').text('[inspect]');
+      this.$('.toggler').text('inspect');
       this.$('.panel').html('<pre>' + JSON.stringify(e.resource, null, 2) + '</pre>');
     },
     toggle: function(e){
       if(this.$('.panel').is(':visible')){
-        this.$('.panel').hide();
+        this.$('.panel').slideUp();
         this.$('h1').remove();
-        this.$('.toggler').text('[show]');
+        this.$('.toggler').text('show');
         this.$el.removeClass('active');
       }
       else{
-        this.$('.panel').delay(300).fadeIn();
         this.$el.prepend($("<h1>inspector</h1>").hide().delay(300).fadeIn());
-        this.$('.toggler').text('[hide]');
+        this.$('.toggler').text('hide');
         this.$el.addClass('active');
+        this.$('.panel').slideDown();
       }
     }
   });

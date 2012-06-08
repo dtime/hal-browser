@@ -9,35 +9,38 @@ html
     link rel="stylesheet" media="screen" href="/javascripts/prettify.css"
     link rel="stylesheet" media="screen" href="/stylesheets/bootstrap.css"
 
-  body
+  body.explorer
     .navbar.navbar-fixed-top
       .navbar-inner
-        .container
+        .span2
           a.brand href="/" HAL Explorer
-          ul.nav.pull-right
-            li.dropdown
-              a.dropdown-toggle data-toggle="dropdown"
-                | Endpoints
-                b.caret
-              ul.dropdown-menu
-                li: a href="/login/stag" Dtime Sandbox
-                li: a href="/login/prod" Live Dtime
-            li: a href="/logout" Logout
+        ul.nav.pull-right
+          li.dropdown
+            a.dropdown-toggle data-toggle="dropdown"
+              | Endpoints
+              b.caret
+            ul.dropdown-menu
+              li: a href="/login/stag" Dtime Sandbox
+              li: a href="/login/prod" Live Dtime
+          li: a href="/logout" Logout
 
-    #location-bar
-      .container
-        select class="method"
-          option GET
-          option OPTIONS
-        input.address
-        input.go type="submit" value="Go"
-      #current-resource
-    div.clearfix#container
+    #location-bar-container.container
       #inspector
-        h1
-        div.toggler
-          p [inspect]
-        div.panel
+        .pull-right.btn.toggler inspect
+        .toggled
+          h1
+          div.panel
+      form#location-bar.form-horizontal
+        .span5
+          input.span5.address size="16" type="text"
+        .btn-group.span2
+          button.go.btn.btn-primary GET
+          button.btn.btn-primary.dropdown-toggle data-toggle="dropdown"
+            span.caret
+          ul.dropdown-menu.method-list
+            li: a href="#" GET
+            li: a href="#" OPTIONS
+    div.clearfix#container
       div#browser
         #current-resource
     == partial("js_resource")
