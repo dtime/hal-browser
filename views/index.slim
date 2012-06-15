@@ -3,8 +3,8 @@ html
   head
     meta charset="utf-8"
     title API Browser
-    link rel="stylesheet" media="screen" href="/styles.css"
     link rel="stylesheet" media="screen" href="/stylesheets/bootstrap.css"
+    link rel="stylesheet" media="screen" href="/styles.css"
   body.main
     .navbar.navbar-fixed-top
       .navbar-inner
@@ -18,35 +18,33 @@ html
               ul.dropdown-menu
                 li: a href="/login/stag" Dtime Sandbox
                 / li: a href="/login/prod" Live Dtime
-            li: a href="/logout" Logout
+            - if session[:access_token]
+              li: a href="/logout" Logout
     .container
       .hero-unit
         h1 HAL Api Browser
         p Choose an authenticated endpoint or connect to any valid one with
           the form below.
-      .page-header
-        h2 Manual Connection:
+      form.big-bar(action='/explorer')
+        .address
+          input.endpoint(type="text" placeholder="https://api.dtime.com" name="root")
+          button.btn.btn.btn-primary type="submit" Connect
         p.help-cors
           strong Note:
           |  The endpoint must use CORS to enable cross-domain
              AJAX requests, or the hal browser won't be able to access
              it.
-      form.form-horizontal(action='/explorer')
-        .control-group
-          label.control-label API Root:
-          .controls
-            .input-append
-              input.span7.endpoint(type="text" placeholder="https://api.dtime.com" name="root")
-              button.btn.btn.btn-primary type="submit" Connect
       .page-header
         h2 Authenticated access:
       .well.thumnails.endpoints.clearfix
         .row
-          a.pull-right.span1.btn.btn-large.btn-success href="/login/stag" OAuth Connect
+          a.pull-right.span1.btn.btn-large href="/login/stag" OAuth Connect
           .span8
             h3 Dtime Sandbox
-            p A fully functional replica of dtime for playing around with the
-              api. Access at: http://staging.dtime.com/
+            p
+              | A fully functional replica of dtime for playing around with the
+                api. Access at: &nbsp;
+              a href="https://staging.dtime.com/" https://staging.dtime.com/
         .row
           a.pull-right.span1.btn.btn-large.disabled href="#" OAuth Connect
           .span8

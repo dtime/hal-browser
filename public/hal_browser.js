@@ -22,9 +22,11 @@
         self.inspectorView.showRawResource(e);
       });
 
-      if (window.location.hash === '') {
-        var entry = opts.entryPoint || Dtime.defaults.endpoint;
-        window.location.hash = "GET:"+entry;
+      if (window.location.hash === '' || window.location.hash === "#GET:") {
+        window.location.hash = "GET:https://api.dtime.com";
+      }
+      else{
+        console.log(window.location.hash);
       }
     },
 

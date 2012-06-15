@@ -8,6 +8,34 @@
   margin: 2em;
   font-size: 24px;
 }
+.big-bar{
+  margin: 40px 0;
+  padding: 40px 0 60px;
+}
+.big-bar .address{
+  margin: 30px 70px 20px;
+}
+.big-bar .help-cors{
+  text-align: center;
+  color: gray;
+}
+.big-bar input{
+  font-size: 24px;
+  width: 620px;
+  padding: 16px ;
+  line-height: 24px;
+  height: 34px;
+  margin: 0 ;
+  display: inline-block;
+}
+.big-bar button{
+  font-size: 18px;
+  padding: 12px;
+  padding: 16px;
+  height: 60px;
+  margin: 0 1em;
+  display: inline-block;
+}
 body.main{
   padding-top: 34px;
 }
