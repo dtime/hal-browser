@@ -23,7 +23,12 @@
       });
 
       if (window.location.hash === '' || window.location.hash === "#GET:") {
-        window.location.hash = "GET:https://api.dtime.com";
+        if(HalRequest.defaults.endpoint != ''){
+          window.location.hash = "GET:"+HalRequest.defaults.endpoint ;
+        }
+        else{
+          window.location.hash = "GET:https://api.dtime.com";
+        }
       }
       else{
         console.log(window.location.hash);
@@ -118,7 +123,7 @@
 
       }
       else{
-        var ret = Dtime.request({url: url, method: method}).done(function(resource){
+        var ret = HalRequest.request({url: url, method: method}).done(function(resource){
           self.resourceView.render(new HAL.Models.Resource(resource.state, resource.xhr));
           self.trigger('render-resource', { resource: resource.state });
         }).fail(function(jqxhr) {

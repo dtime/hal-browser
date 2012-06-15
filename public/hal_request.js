@@ -37,7 +37,7 @@
 
   })();
 
-  window.Dtime = {
+  window.HalRequest = {
     defaults: {
       client_id: '4ee43e9abce748bebf000002',
       client_secret: 'goodpassword',

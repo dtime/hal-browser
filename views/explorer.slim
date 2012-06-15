@@ -22,7 +22,7 @@ html
             ul.dropdown-menu
               li: a href="/login/stag" Dtime Sandbox
               / li: a href="/login/prod" Live Dtime
-          - if session[:access_token]
+          - if session[:current_api_token]
             li: a href="/logout" Logout
 
     #location-bar-container.container
@@ -56,10 +56,10 @@ html
     script src='/javascripts/uritemplates.js'
     script src='/javascripts/bootstrap.js'
     / script src='/javascripts/prettify.js'
-    script src="/dtime.js"
+    script src="/hal_request.js"
     script src="/hal_browser.js"
     javascript:
-      Dtime.defaults.endpoint = "#{{@api_root}}";
-      Dtime.defaults.oauth_token = "#{@api_token}";
+      HalRequest.defaults.endpoint = "#{{@api_root}}";
+      HalRequest.defaults.oauth_token = "#{@api_token}";
       router = new HAL.Router({});
       Backbone.history.start();

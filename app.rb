@@ -17,7 +17,7 @@ end
 get '/explorer' do
   if(params[:root])
     session[:current_root] = params[:root]
-    session[:current_api_token] = false
+    session[:current_api_token] = nil
     redirect to('/explorer')
   else
     @api_token = session[:current_api_token]

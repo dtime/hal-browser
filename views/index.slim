@@ -18,7 +18,7 @@ html
               ul.dropdown-menu
                 li: a href="/login/stag" Dtime Sandbox
                 / li: a href="/login/prod" Live Dtime
-            - if session[:access_token]
+            - if session[:current_api_token]
               li: a href="/logout" Logout
     .container
       .hero-unit
