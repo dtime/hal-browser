@@ -286,6 +286,7 @@
         this.$('.toggler').text('hide');
       }
       this.$('.panel').html('<iframe src=' + e.url + '></iframe>').slideDown();
+      $('body').scrollTop(0);
     },
 
     showRawResource: function(e) {
